@@ -63,7 +63,7 @@ runs:
         echo "dir=$(poetry config cache-dir)" >> $GITHUB_OUTPUT
 
     - name: Setup Poetry cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.poetry-cache.outputs.dir }}
         key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
