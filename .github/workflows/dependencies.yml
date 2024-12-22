@@ -1,0 +1,33 @@
+name: Dependencies
+on:
+  schedule:
+    - cron: "0 0 * * 1" # Run every Monday at midnight
+  workflow_dispatch:
+
+jobs:
+  dependencies:
+    name: Check Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.7.1
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Check for updates
+        run: poetry show --outdated
+
+      - name: Run safety check
+        run: |
+          pip install safety
+          safety check

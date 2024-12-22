@@ -1,0 +1,101 @@
+[tool.poetry]
+name = "docs-actions"
+version = "0.1.0"
+description = "GitHub Actions that interface with a private API to do various tasks."
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "docs_actions", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.31.0"
+firecrawl-py = "^1.6.8"
+rich = "^13.9.4"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4"
+ruff = "^0.3.0"
+pre-commit = "^3.6.0"
+pytest-cov = "^4.1.0"
+bandit = "^1.7.8"
+safety = "^3.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.1.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "W",   # pycodestyle warnings
+    "C90", # mccabe
+    "N",   # pep8-naming
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "S",   # bandit
+    "BLE", # blind-except
+    "FBT", # boolean-trap
+    "A",   # builtins
+    "COM", # commas
+    "C4",  # comprehensions
+    "DTZ", # datetimez
+    "T10", # debugger
+    "EM",  # errmsg
+    "G",   # logging-format
+    "ISC", # implicit-str-concat
+    "ICN", # import-conventions
+    "PIE", # misc
+    "PT",  # pytest
+    "Q",   # quotes
+    "RSE", # raise
+    "RET", # return
+    "SLF", # self
+    "SIM", # simplify
+    "TID", # tidy-imports
+    "TCH", # type-checking
+    "ARG", # unused-arguments
+    "PTH", # use-pathlib
+    "ERA", # eradicate
+    "PD",  # pandas-vet
+    "PGH", # pygrep-hooks
+    "PL",  # pylint
+    "TRY", # tryceratops
+    "RUF", # ruff
+]
+ignore = []
+
+[tool.ruff.isort]
+known-first-party = ["docs_actions"]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.pytest.ini_options]
+addopts = "--cov=docs_actions --cov-report=term-missing --cov-report=xml --cov-report=html"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["docs_actions"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+    "raise ImportError",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]

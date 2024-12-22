@@ -1,0 +1,96 @@
+name: "Docs to LLM Text"
+description: "Convert documentation websites into LLM-ready text files using Firecrawl"
+branding:
+  icon: "book"
+  color: "blue"
+
+inputs:
+  url:
+    description: "URL of the documentation website to crawl"
+    required: true
+  api_key:
+    description: "Firecrawl API key"
+    required: true
+  page_limit:
+    description: "Maximum number of pages to crawl"
+    required: false
+    default: "100"
+  output_dir:
+    description: "Directory to save crawled content"
+    required: false
+    default: "docs/crawled"
+  formats:
+    description: "Output formats (comma-separated: html,markdown,metadata)"
+    required: false
+    default: "html,markdown,metadata"
+  artifact_name:
+    description: "Name of the artifact to upload crawled content"
+    required: false
+    default: "crawled-docs"
+  poetry-version:
+    description: "Poetry version to use (or 'latest')"
+    required: false
+    default: "latest"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+        cache: "pip"
+
+    - name: Install pipx
+      shell: bash
+      run: |
+        python3 -m pip install --user pipx
+        python3 -m pipx ensurepath
+
+    - name: Install Poetry
+      shell: bash
+      run: |
+        if [[ "${{ inputs.poetry-version }}" == "latest" ]]; then
+          pipx install poetry
+        else
+          pipx install poetry==${{ inputs.poetry-version }}
+        fi
+
+    - name: Get Poetry cache dir
+      id: poetry-cache
+      shell: bash
+      run: |
+        echo "dir=$(poetry config cache-dir)" >> $GITHUB_OUTPUT
+
+    - name: Setup Poetry cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.poetry-cache.outputs.dir }}
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        poetry install --no-interaction --no-root
+
+    - name: Run crawler
+      shell: bash
+      env:
+        FIRECRAWL_API_KEY: ${{ inputs.api_key }}
+      run: |
+        cd ${{ github.action_path }}
+        poetry run python src/docs_actions/crawl.py \
+          --url "${{ inputs.url }}" \
+          --limit "${{ inputs.page_limit }}" \
+          --output "${{ inputs.output_dir }}" \
+          --formats "${{ inputs.formats }}"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ inputs.output_dir }}
+        if-no-files-found: error
