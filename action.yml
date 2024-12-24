@@ -1,32 +1,30 @@
-name: "Docs to LLM Text"
-description: "Convert documentation websites into LLM-ready text files using Firecrawl"
+name: "llms-txt-action"
+description: "Convert documentation websites into LLM-ready by adding /llms.txt. reference: https://llmstxt.org/."
 branding:
   icon: "book"
   color: "blue"
 
 inputs:
-  url:
-    description: "URL of the documentation website to crawl"
-    required: true
-  api_key:
-    description: "Firecrawl API key"
-    required: true
-  page_limit:
-    description: "Maximum number of pages to crawl"
+  docs_dir:
+    description: "Documentation output directory"
     required: false
-    default: "100"
-  output_dir:
-    description: "Directory to save crawled content"
+    default: "site/"
+  generate_llms_txt:
+    description: "Whether to generate LLMS.txt file"
     required: false
-    default: "docs/crawled"
-  formats:
-    description: "Output formats (comma-separated: html,markdown,metadata)"
+    default: "true"
+  llms_txt_name:
+    description: "LLMS.txt file name"
     required: false
-    default: "html,markdown,metadata"
-  artifact_name:
-    description: "Name of the artifact to upload crawled content"
+    default: "llms.txt"
+  generate_md_files:
+    description: "generate md files for each html file"
     required: false
-    default: "crawled-docs"
+    default: "true"
+  # formats:
+  #   description: "Output formats (comma-separated: html,markdown,metadata)"
+  #   required: false
+  #   default: "html,markdown,metadata"
   poetry-version:
     description: "Poetry version to use (or 'latest')"
     required: false
@@ -38,7 +36,7 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.12"
+        python-version: "3.11"
         cache: "pip"
 
     - name: Install pipx
@@ -76,21 +74,16 @@ runs:
         cd ${{ github.action_path }}
         poetry install --no-interaction --no-root
 
-    - name: Run crawler
+    - name: Run llms-txt-action
       shell: bash
-      env:
-        FIRECRAWL_API_KEY: ${{ inputs.api_key }}
       run: |
         cd ${{ github.action_path }}
-        poetry run python src/docs_actions/crawl.py \
-          --url "${{ inputs.url }}" \
-          --limit "${{ inputs.page_limit }}" \
-          --output "${{ inputs.output_dir }}" \
-          --formats "${{ inputs.formats }}"
+        poetry run python src/llms-txt-action/main.py
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ inputs.artifact_name }}
-        path: ${{ inputs.output_dir }}
-        if-no-files-found: error
+    - name: Commit changes
+      shell: bash
+      run: |
+        cd ${{ inputs.docs_dir }}
+        git add .
+        git commit -m "Generated LLMS.txt file"
+        git push

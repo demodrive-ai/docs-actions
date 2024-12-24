@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "docs_actions", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 requests = "^2.31.0"
 firecrawl-py = "^1.6.8"
 rich = "^13.9.4"
