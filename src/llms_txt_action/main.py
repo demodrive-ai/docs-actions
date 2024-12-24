@@ -1,13 +1,16 @@
-import os
-from utils import concatenate_markdown_files, convert_html_to_markdown
+"""Script to generate markdown files and llms.txt from HTML documentation."""
+
 import logging
+import os
+from pathlib import Path
+
+from utils import concatenate_markdown_files, convert_html_to_markdown
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 if __name__ == "__main__":
-
     logger.info("Starting Generation....")
     docs_dir = os.environ.get("INPUT_DOCS_DIR", "site").lstrip("/")
     generate_md_files = os.environ.get("INPUT_GENERATE_MD_FILES", "true")
@@ -24,12 +27,12 @@ if __name__ == "__main__":
             markdown_files,
             f"{docs_dir}/{llms_txt_name}",
         )
-        logger.info(f"LLMS.txt file generated at {docs_dir}/{llms_txt_name}.")
+        logger.info("LLMS.txt file generated at %s.", docs_dir / llms_txt_name)
 
     if generate_md_files != "true":
         logger.info("Deleting MD files....")
         # delete all md files
         for file in markdown_files:
-            os.remove(file)
+            Path(file).unlink()
         logger.info("MD files deleted.")
     logger.info("Generation completed.")

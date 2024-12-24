@@ -86,11 +86,8 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
-      - name: Run Ruff
-        run: poetry run ruff check .
-
-      - name: Run Ruff Format
-        run: poetry run ruff format --check .
+      - name: Run pre-commit
+        run: poetry run pre-commit run --all-files
 
   security:
     name: Security Checks
