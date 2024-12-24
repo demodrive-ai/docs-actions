@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "docs-actions"
+name = "llms-txt-action"
 version = "0.1.0"
-description = "GitHub Actions that interface with a private API to do various tasks."
-authors = ["Your Name <your.email@example.com>"]
+description = "GitHub Action to make documentation more accessible to LLMs."
+authors = ["demodrive <founders@demodrive.tech>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "docs_actions", from = "src"}]
+packages = [{include = "llms_txt_action", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 requests = "^2.31.0"
 firecrawl-py = "^1.6.8"
 rich = "^13.9.4"

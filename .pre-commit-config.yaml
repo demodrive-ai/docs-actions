@@ -1,14 +1,14 @@
 default_stages: [commit, manual]
 
 repos:
-  # - repo: https://github.com/astral-sh/ruff-pre-commit
-  #   rev: v0.6.8
-  #   hooks:
-  #     - id: ruff-format
-  #     - id: ruff
-  #       args: [--fix, --exit-non-zero-on-fix, --config=pyproject.toml]
-  #       types_or: [python, pyi]
-  #       require_serial: true
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
+    hooks:
+      - id: ruff-format
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix, --config=pyproject.toml]
+        types_or: [python, pyi]
+        require_serial: true
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
