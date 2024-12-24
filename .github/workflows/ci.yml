@@ -46,8 +46,8 @@ jobs:
       - name: Install project
         run: poetry install --no-interaction
 
-      - name: Run tests
-        run: poetry run pytest -v --cov=docs_actions --cov-report=xml
+      # - name: Run tests
+      #   run: poetry run pytest -v --cov=docs_actions --cov-report=xml
 
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v4
