@@ -13,22 +13,26 @@ inputs:
     description: "Whether to generate LLMS.txt file"
     required: false
     default: "true"
-  llms_txt_name:
-    description: "LLMS.txt file name"
-    required: false
-    default: "llms.txt"
-  generate_md_files:
-    description: "generate md files for each html file"
+  generate_llms_full_txt:
+    description: "Whether to generate llms_full.txt file"
     required: false
     default: "true"
-  # formats:
-  #   description: "Output formats (comma-separated: html,markdown,metadata)"
-  #   required: false
-  #   default: "html,markdown,metadata"
-  poetry-version:
-    description: "Poetry version to use (or 'latest')"
+  generate_md_files:
+    description: "Generate md files for each html file"
     required: false
-    default: "latest"
+    default: "true"
+  llms_txt_name:
+    description: "Name of the llms.txt output file"
+    required: false
+    default: "llms.txt"
+  llms_full_txt_name:
+    description: "Name of the llms_full.txt output file"
+    required: false
+    default: "llms_full.txt"
+  push_to_artifacts:
+    description: "Whether to push generated files to artifacts"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -79,11 +83,16 @@ runs:
       run: |
         cd ${{ github.action_path }}
         poetry run python src/llms-txt-action/main.py
+    # - name: Commit changes
+    #   shell: bash
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     cd ${{ inputs.docs_dir }}
+    #     git config --global user.email "action@github.com"
+    #     git config --global user.name "GitHub Action"
+    #     git add .
+    #     git commit -m "Generated LLMS.txt file"
+    #     git push
 
-    - name: Commit changes
-      shell: bash
-      run: |
-        cd ${{ inputs.docs_dir }}
-        git add .
-        git commit -m "Generated LLMS.txt file"
-        git push
+

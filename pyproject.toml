@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "llms-txt-action"
 version = "0.1.0"
-description = "GitHub Action to generate LLMS.txt from HTML documentation."
+description = "GitHub Action to make documentation more accessible to LLMs."
 authors = ["demodrive <founders@demodrive.tech>"]
 license = "MIT"
 readme = "README.md"

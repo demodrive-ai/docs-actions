@@ -15,8 +15,10 @@ if __name__ == "__main__":
     docs_dir = os.environ.get("INPUT_DOCS_DIR", "site").lstrip("/")
     generate_md_files = os.environ.get("INPUT_GENERATE_MD_FILES", "true")
     generate_llms_txt = os.environ.get("INPUT_GENERATE_LLMS_TXT", "true")
+    generate_llms_full_txt = os.environ.get("INPUT_GENERATE_LLMS_FULL_TXT", "true")
     llms_txt_name = os.environ.get("INPUT_LLMS_TXT_NAME", "llms.txt")
-    poetry_version = os.environ.get("INPUT_POETRY_VERSION", "latest")
+    llms_full_txt_name = os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms_full.txt")
+    push_to_artifacts = os.environ.get("INPUT_PUSH_TO_ARTIFACTS", "false")
 
     logger.info("Generating MD files....")
     markdown_files = convert_html_to_markdown(docs_dir)
