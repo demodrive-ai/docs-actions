@@ -28,12 +28,14 @@ def sample_html_content():
     </html>
     """
 
+
 @pytest.fixture
 def sample_html_file(tmp_path, sample_html_content):
     """Sample HTML file for testing."""
     html_file = tmp_path / "test.html"
     html_file.write_text(sample_html_content)
     return html_file
+
 
 @pytest.fixture
 def sample_sitemap_content():
@@ -49,6 +51,7 @@ def sample_sitemap_content():
     </urlset>
     """
 
+
 @pytest.fixture
 def sample_sitemap_file(tmp_path, sample_sitemap_content):
     """Sample sitemap.xml file for testing."""
@@ -56,17 +59,18 @@ def sample_sitemap_file(tmp_path, sample_sitemap_content):
     sitemap_file.write_text(sample_sitemap_content)
     return sitemap_file
 
+
 # Tests for html_to_markdown
 def test_html_to_markdown_success(sample_html_file):
     """Test HTML to markdown conversion."""
-    with patch("docling.document_converter.DocumentConverter") as MockConverter:
+    with patch("docling.document_converter.DocumentConverter") as mock_converter_cls:
         mock_converter = Mock()
         mock_result = Mock()
         mock_result.status = ConversionStatus.SUCCESS
         markdown_content = "# First Heading\n\nTest content"
         mock_result.document.export_to_markdown.return_value = markdown_content
         mock_converter.convert.return_value = mock_result
-        MockConverter.return_value = mock_converter
+        mock_converter_cls.return_value = mock_converter
 
         result = html_to_markdown(sample_html_file)
         assert result == markdown_content
@@ -86,10 +90,15 @@ def test_convert_html_to_markdown_success(tmp_path, sample_html_file):
         assert len(result) == 1
         assert result[0].suffix == ".md"
 
+
 def test_convert_html_to_markdown_invalid_path():
     """Test convert html to markdown invalid path."""
-    with pytest.raises(ValueError, match="The input path nonexistent_path is not a directory."):  # noqa: E501
+    with pytest.raises(
+        ValueError,
+        match="The input path nonexistent_path is not a directory.",
+    ):
         convert_html_to_markdown("nonexistent_path")
+
 
 # Tests for generate_docs_structure
 def test_generate_docs_structure(sample_sitemap_file):
@@ -98,6 +107,7 @@ def test_generate_docs_structure(sample_sitemap_file):
     assert "# Docling Documentation" in result
     assert "Page1" in result
     assert "This is a placeholder summary" in result
+
 
 # Tests for concatenate_markdown_files
 def test_concatenate_markdown_files(tmp_path):

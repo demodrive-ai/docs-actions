@@ -5,7 +5,7 @@ description = "GitHub Action to make documentation more accessible to LLMs."
 authors = ["DemoDrive AI <founders@demodrive.tech>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "llms_txt_action", from = "src"}]
+packages = [{include = "llms_txt_action"}]
 keywords = ["llm", "documentation", "github-action"]
 classifiers = [
     "Development Status :: 3 - Alpha",

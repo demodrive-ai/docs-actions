@@ -62,7 +62,9 @@ def generate_documentation(  # noqa: PLR0913
     # Set defaults if None
     generate_md_files = True if generate_md_files is None else generate_md_files
     generate_llms_txt = True if generate_llms_txt is None else generate_llms_txt
-    generate_llms_full_txt = True if generate_llms_full_txt is None else generate_llms_full_txt  # noqa: E501
+    generate_llms_full_txt = (
+        True if generate_llms_full_txt is None else generate_llms_full_txt
+    )
 
     if generate_llms_txt:
         with Path(f"{docs_dir}/{llms_txt_name}").open("w") as f:
@@ -75,7 +77,10 @@ def generate_documentation(  # noqa: PLR0913
             markdown_files,
             f"{docs_dir}/{llms_full_txt_name}",
         )
-        logger.info("llms_full.txt file generated at %s", f"{docs_dir}/{llms_full_txt_name}")  # noqa: E501
+        logger.info(
+            "llms_full.txt file generated at %s",
+            f"{docs_dir}/{llms_full_txt_name}",
+        )
 
     if not generate_md_files:
         logger.info("Deleting MD files as generate_md_files is set to False")
@@ -90,7 +95,7 @@ def generate_documentation(  # noqa: PLR0913
 def main():
     """Parse arguments and run generate_documentation."""
     parser = argparse.ArgumentParser(
-        description="Generate markdown and llms.txt files from HTML documentation."
+        description="Generate markdown and llms.txt files from HTML documentation.",
     )
     parser.add_argument(
         "--docs-dir",
@@ -112,7 +117,8 @@ def main():
     parser.add_argument(
         "--generate-llms-full-txt",
         type=str2bool,
-        default=os.environ.get("INPUT_GENERATE_LLMS_FULL_TXT", "true").lower() == "true",
+        default=os.environ.get("INPUT_GENERATE_LLMS_FULL_TXT", "true").lower()
+        == "true",
         help="Whether to generate full llms.txt [default: true]",
     )
     parser.add_argument(
