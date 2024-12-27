@@ -5,7 +5,11 @@ import logging
 import os
 from pathlib import Path
 
-from .utils import concatenate_markdown_files, convert_html_to_markdown
+from .utils import (
+    concatenate_markdown_files,
+    convert_html_to_markdown,
+    generate_docs_structure,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,7 +23,8 @@ def str2bool(v):
         return True
     if v.lower() in ("no", "false", "f", "n", "0"):
         return False
-    raise argparse.ArgumentTypeError("Boolean value expected.")
+    msg = "Boolean value expected."
+    raise argparse.ArgumentTypeError(msg)
 
 
 def generate_documentation(  # noqa: PLR0913
@@ -28,7 +33,7 @@ def generate_documentation(  # noqa: PLR0913
     generate_llms_txt: bool | None = None,
     generate_llms_full_txt: bool | None = None,
     llms_txt_name: str = "llms.txt",
-    llms_full_txt_name: str = "llms_full.txt",  # noqa: ARG001
+    llms_full_txt_name: str = "llms_full.txt",
 ) -> list[str]:
     """Generate markdown and llms.txt files from HTML documentation.
 
@@ -58,12 +63,17 @@ def generate_documentation(  # noqa: PLR0913
     generate_llms_full_txt = True if generate_llms_full_txt is None else generate_llms_full_txt  # noqa: E501
 
     if generate_llms_txt:
+        with Path(f"{docs_dir}/{llms_txt_name}").open("w") as f:
+            f.write(generate_docs_structure(docs_dir))
+        logger.info("llms.txt file generated at %s", f"{docs_dir}/{llms_txt_name}")
+
+    if generate_llms_full_txt:
         logger.info("Generating llms.txt file")
         concatenate_markdown_files(
             markdown_files,
-            f"{docs_dir}/{llms_txt_name}",
+            f"{docs_dir}/{llms_full_txt_name}",
         )
-        logger.info("llms.txt file generated at %s", f"{docs_dir}/{llms_txt_name}")
+        logger.info("llms_full.txt file generated at %s", f"{docs_dir}/{llms_full_txt_name}")  # noqa: E501
 
     if not generate_md_files:
         logger.info("Deleting MD files as generate_md_files is set to False")
