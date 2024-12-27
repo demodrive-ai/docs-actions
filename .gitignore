@@ -58,3 +58,4 @@ act.secrets
 .cache/
 
 project-description.md
+.ruff_cache/
