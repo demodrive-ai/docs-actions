@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llms-txt-action"
-version = "0.1.0-rc1"
+version = "0.1.0-rc3"
 description = "GitHub Action to make documentation more accessible to LLMs."
 authors = ["DemoDrive AI <founders@demodrive.tech>"]
 license = "MIT"
@@ -27,6 +27,7 @@ requests = "^2.31.0"
 firecrawl-py = "^1.6.8"
 rich = "^13.9.4"
 docling = "^2.14.0"
+defusedxml = "^0.7.1"
 
 
 [tool.poetry.group.dev.dependencies]
