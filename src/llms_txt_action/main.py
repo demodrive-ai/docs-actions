@@ -46,7 +46,7 @@ def generate_documentation(  # noqa: PLR0913
         List of generated markdown file paths
 
     """
-    docs_dir = docs_dir.lstrip("/")
+    docs_dir = docs_dir.rstrip("/")
     logger.info("Starting Generation at folder - %s", docs_dir)
 
     logger.info("Generating MD files for all HTML files at folder - %s", docs_dir)
