@@ -29,6 +29,7 @@ def str2bool(v):
 
 def generate_documentation(  # noqa: PLR0913
     docs_dir: str = "site",
+    sitemap_path: str = "sitemap.xml",
     generate_md_files: bool | None = None,
     generate_llms_txt: bool | None = None,
     generate_llms_full_txt: bool | None = None,
@@ -40,6 +41,7 @@ def generate_documentation(  # noqa: PLR0913
     Args:
     ----
         docs_dir: Directory containing HTML documentation
+        sitemap_path: Path to the sitemap.xml file relative to docs_dir
         generate_md_files: Whether to keep generated markdown files
         generate_llms_txt: Whether to generate llms.txt
         generate_llms_full_txt: Whether to generate full llms.txt
@@ -64,7 +66,7 @@ def generate_documentation(  # noqa: PLR0913
 
     if generate_llms_txt:
         with Path(f"{docs_dir}/{llms_txt_name}").open("w") as f:
-            f.write(generate_docs_structure(docs_dir))
+            f.write(generate_docs_structure(f"{docs_dir}/{sitemap_path}"))
         logger.info("llms.txt file generated at %s", f"{docs_dir}/{llms_txt_name}")
 
     if generate_llms_full_txt:
@@ -123,10 +125,16 @@ def main():
         default=os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms_full.txt"),
         help="Name of the full llms.txt file [default: llms_full.txt]",
     )
+    parser.add_argument(
+        "--sitemap-path",
+        default=os.environ.get("INPUT_SITEMAP_PATH", "sitemap.xml"),
+        help="Path relative to docs_dir to the sitemap.xml file [default: sitemap.xml]",
+    )
 
     args = parser.parse_args()
     generate_documentation(
         docs_dir=args.docs_dir,
+        sitemap_path=args.sitemap_path,
         generate_md_files=args.generate_md_files,
         generate_llms_txt=args.generate_llms_txt,
         generate_llms_full_txt=args.generate_llms_full_txt,

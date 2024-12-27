@@ -82,7 +82,7 @@ runs:
       shell: bash
       run: |
         cd ${{ github.action_path }}
-        poetry run python src/llms-txt-action/main.py
+        poetry run python -m llms_txt_action.entrypoint
     # - name: Commit changes
     #   shell: bash
     #   env:

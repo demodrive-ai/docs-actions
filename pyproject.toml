@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llms-txt-action"
-version = "0.1.0-rc5"
+version = "0.1.0-rc6"
 description = "GitHub Action to make documentation more accessible to LLMs."
 authors = ["DemoDrive AI <founders@demodrive.tech>"]
 license = "MIT"
@@ -12,17 +12,20 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Documentation"
 ]
 homepage = "https://github.com/demodrive-ai/llms-txt-action"
 repository = "https://github.com/demodrive-ai/llms-txt-action"
 
 [tool.poetry.scripts]
-llms-txt = "llms_txt_action.main:main"
+llms-txt = "llms_txt_action.entrypoint:main"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 requests = "^2.31.0"
 firecrawl-py = "^1.6.8"
 rich = "^13.9.4"

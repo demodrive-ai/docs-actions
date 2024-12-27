@@ -29,16 +29,16 @@ def html_to_markdown(input_file: Path) -> str:
     """  # noqa: D401
     doc_converter = DocumentConverter()
     conversion_result = doc_converter.convert(input_file)
-
+    print(conversion_result)
+    print("selvam")
+    logger.info(conversion_result)
     if conversion_result.status == ConversionStatus.SUCCESS:
         markdown_content = conversion_result.document.export_to_markdown()
         # Fast string search for first heading using find()
         index = markdown_content.find("\n#")
         return markdown_content[index + 1 :] if index >= 0 else markdown_content
     msg = f"Failed to convert {input_file}: {conversion_result.errors}"
-    raise RuntimeError(
-        msg,
-    )
+    raise RuntimeError(msg)
 
 
 def convert_html_to_markdown(input_path: str) -> list:
