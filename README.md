@@ -4,8 +4,16 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/demodrive-ai/llms-txt-action/ci.yml?branch=main)](https://github.com/demodrive-ai/llms-txt-actions/actions)
 [![License](https://img.shields.io/github/license/demodrive-ai/llms-txt-actions)](LICENSE)
 
-Convert documentation websites into LLM-ready text files for [Readthedocs](https://readthedocs.io/), [MKDocs](https://www.mkdocs.org/), [Sphinx](https://www.sphinx-doc.org/en/master/index.html#) and more. For more details read: https://llmstxt.org/
+Make your documentation into LLM friendly.
 
+This Github action/CLI tool can automatically generate markdown files for each endpoint in your documentation as per the standard proposed by answer.ai, for more details read: https://llmstxt.org/.
+
+## Features
+
+- 📄 **Content Processing**: Generate LLM-ready markdown files from popular document frameworks such as [Readthedocs](https://readthedocs.io/), [MKDocs](https://www.mkdocs.org/), [Sphinx](https://www.sphinx-doc.org/en/master/index.html#) and more.
+- 0️⃣ **Zero Config**: Works out of the box for most file based doc framework.
+- 💾 **Multiple Output Formats**: Save content in HTML, Markdown, and metadata formats
+- 🌈 **All Formats** : Can process HTML, PDF, Images, DOCX, PPTX, XLSX (thanks to docling) and convert them to Markdown.
 
 ## Quick Start
 
@@ -21,12 +29,16 @@ There are two ways to access this library.
           generate_md_files: true
           # any other inputs you would like to set.
 ```
+OR
 
-2. Install it as a cli command from pypi.
+You can use it outside of Github Action.
 
 ```bash
+# python 3.9 or above
 pip install llms-txt-action
+
 llms-txt --docs-dir site/
+# The first run takes a while as it downloads models files from the intrnet.
 ```
 
 ## Input Parameters
