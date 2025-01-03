@@ -138,6 +138,9 @@ def generate_docs_structure(sitemap_path: str) -> str:
 
     """  # noqa: D401
     # Parse the sitemap XML
+    if not Path(sitemap_path).exists():
+        msg = f"The sitemap file {sitemap_path} does not exist."
+        raise FileNotFoundError(msg)
     tree = ET.parse(sitemap_path)
     root = tree.getroot()
 

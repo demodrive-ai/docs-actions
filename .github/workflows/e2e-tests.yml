@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  e2e-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,18 +29,19 @@ jobs:
         run: |
           poetry install --no-interaction
           pip install mkdocs
+          pip install sphinx sphinx-sitemap
 
-      - name: Build test docs
+      - name: mkdocs - Build test docs
         run: |
           cd tests/test_mkdocs
           mkdocs build
 
-      - name: Run llms-txt
+      - name: mkdocs - Run llms-txt
         run: |
           cd tests/test_mkdocs
           poetry run llms-txt --docs-dir site/
 
-      - name: Check generated files
+      - name: mkdocs - Check generated files
         run: |
           cd tests/test_mkdocs
           if [ ! -f "site/index.md" ]; then
@@ -55,3 +56,35 @@ jobs:
             echo "llms_full.txt not found"
             exit 1
           fi
+
+      - name: sphinx - Build docs
+        run: |
+          cd tests/test_sphinx
+          make html
+
+      - name: sphinx - Run llms-txt
+        run: |
+          cd tests/test_sphinx
+          poetry run llms-txt --docs-dir build/html/
+
+      - name: sphinx - Check generated files
+        run: |
+          cd tests/test_sphinx
+          if [ ! -f "build/html/index.html" ]; then
+            echo "index.html not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+      - name: sphinx - Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sphinx-test-artifacts
+          path: tests/test_sphinx/build/html/llms.txt
+          retention-days: 1

@@ -4,16 +4,23 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/demodrive-ai/llms-txt-action/ci.yml?branch=main)](https://github.com/demodrive-ai/llms-txt-actions/actions)
 [![License](https://img.shields.io/github/license/demodrive-ai/llms-txt-actions)](LICENSE)
 
-Make your documentation into LLM friendly.
 
-This Github action/CLI tool can automatically generate markdown files for each endpoint in your documentation as per the standard proposed by answer.ai, for more details read: https://llmstxt.org/.
+### Make your documentation LLM friendly.
+
+This Github action/CLI tool can automatically generate markdown (.md) files for each endpoint in your documentation as per the standard proposed by [answer.ai](https://www.answer.ai/), for more details read: https://llmstxt.org/.
+
+![File Structure](docs/file_structure.png)
+
+
 
 ## Features
 
-- 📄 **Content Processing**: Generate LLM-ready markdown files from popular document frameworks such as [Readthedocs](https://readthedocs.io/), [MKDocs](https://www.mkdocs.org/), [Sphinx](https://www.sphinx-doc.org/en/master/index.html#) and more.
-- 0️⃣ **Zero Config**: Works out of the box for most file based doc framework.
-- 💾 **Multiple Output Formats**: Save content in HTML, Markdown, and metadata formats
-- 🌈 **All Formats** : Can process HTML, PDF, Images, DOCX, PPTX, XLSX (thanks to docling) and convert them to Markdown.
+- 📄 **Content Processing**: Generate LLM-ready markdown (.md) files from popular document frameworks such as [Readthedocs](https://readthedocs.io/), [MKDocs](https://www.mkdocs.org/), [Sphinx](https://www.sphinx-doc.org/en/master/index.html#) and more.
+- 🌈 **All Formats** : Can process HTML, PDF, Images, DOCX, PPTX, XLSX (thanks to [docling](https://github.com/DS4SD/docling)) and convert them to Markdown. (coming soon)
+- 0️⃣ **Zero Config**: Works out of the box for most file based documentation framework.
+- 💾 **Generate Summaries**: Using LLMs, we generate concise summary of each page.
+- **BYO-Model**: Thanks to litellm, you can use upto 150 models.
+
 
 ## Quick Start
 
@@ -22,6 +29,7 @@ There are two ways to access this library.
 1. Add this to your GitHub workflow:
 
 ```yaml
+
     steps:
       - name: Generate llms.txt
         uses: demodrive-ai/llms-txt-action@v0.1.0
@@ -45,12 +53,20 @@ llms-txt --docs-dir site/
 | Parameter           | Required | Default    | Description                                 |
 |---------------------|----------|------------|----------------------------------------------|
 | `docs_dir`          | No       | `site/`    | Documentation output directory               |
-| `generate_llms_txt` | No       | `true`     | Whether to generate LLMS.txt file            |
+| `generate_llms_txt` | No       | `true`     | Whether to generate LLMS.txt file. This requires MODEL_API_KEY.            |
 | `generate_llms_full_txt` | No  | `true`     | Whether to generate llms_full.txt file       |
 | `generate_md_files` | No       | `true`     | Generate md files for each html file         |
 | `llms_txt_name`     | No       | `llms.txt` | Name of the llms.txt output file             |
 | `llms_full_txt_name`| No       | `llms_full.txt` | Name of the llms_full.txt output file   |
 | `push_to_artifacts` | No       | `false`    | Whether to push generated files to github artifacts |
+| `model_name` | No       | `gpt-4o`    | Whether to push generated files to github artifacts |
+
+
+
+## Secret Parameters
+| Parameter           | Required | Default    | Description                                 |
+|---------------------|----------|------------|----------------------------------------------|
+| `MODEL_API_KEY`          | No       | `site/`    | Documentation output directory               |
 
 
 
@@ -117,7 +133,7 @@ MkDocs is a fast and simple static site generator that's geared towards building
 
 
 ```yaml
-# github action
+# github action - .github/workflows/docs.yml
 
       - name: Generate static files
         run : mkdocs build
@@ -129,6 +145,7 @@ MkDocs is a fast and simple static site generator that's geared towards building
 
       - name: Deploy to Github
         run : mkdocs gh-deploy --dirty
+        # --dirty helps keep the generated .md and .txt files from getting deleted.
 ```
 
 ### Sphinx + Github Pages

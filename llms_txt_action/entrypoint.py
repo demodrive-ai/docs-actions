@@ -68,8 +68,14 @@ def generate_documentation(  # noqa: PLR0913
 
     if generate_llms_txt:
         with Path(f"{docs_dir}/{llms_txt_name}").open("w") as f:
-            f.write(generate_docs_structure(f"{docs_dir}/{sitemap_path}"))
-        logger.info("llms.txt file generated at %s", f"{docs_dir}/{llms_txt_name}")
+            try:
+                f.write(generate_docs_structure(f"{docs_dir}/{sitemap_path}"))
+                logger.info("llms.txt file generated at %s", f"{docs_dir}/{llms_txt_name}")
+            except FileNotFoundError:
+                logger.exception(
+                    "Could not find sitemap file at %s", f"{docs_dir}/{sitemap_path}"
+                )
+                raise
 
     if generate_llms_full_txt:
         logger.info("Generating llms.txt file")
