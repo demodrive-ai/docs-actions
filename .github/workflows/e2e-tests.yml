@@ -18,28 +18,26 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.8.5
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
-          poetry install --no-interaction
-          pip install mkdocs
-          pip install sphinx sphinx-sitemap
+          uv venv
+          uv pip install -e .
+          uv pip install mkdocs sphinx sphinx-sitemap
 
       - name: mkdocs - Build docs
         run: |
           cd tests/test_mkdocs
-          mkdocs build
+          uv run mkdocs build
 
       - name: mkdocs - Run llms-txt
         run: |
           cd tests/test_mkdocs
-          poetry run llms-txt --docs-dir site/
+          uv run llms-txt --docs-dir site/
 
       - name: mkdocs - Check generated files
         run: |
@@ -64,7 +62,7 @@ jobs:
           MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
         run: |
           cd tests/test_mkdocs
-          poetry run llms-txt --docs-dir site/
+          uv run llms-txt --docs-dir site/
 
       - name: mkdocs - Check generated files
         run: |
@@ -81,12 +79,12 @@ jobs:
       - name: sphinx - Build docs
         run: |
           cd tests/test_sphinx
-          make html
+          uv run sphinx-build -M html ./source ./build
 
       - name: sphinx - Run llms-txt
         run: |
           cd tests/test_sphinx
-          poetry run llms-txt --docs-dir build/html/
+          uv run llms-txt --docs-dir build/html/
 
       - name: sphinx - Check generated files
         run: |
@@ -111,7 +109,7 @@ jobs:
           MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
         run: |
           cd tests/test_sphinx
-          poetry run llms-txt --docs-dir build/html/
+          uv run llms-txt --docs-dir build/html/
 
       - name: sphinx - Check generated files
         run: |

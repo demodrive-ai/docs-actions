@@ -1,6 +1,6 @@
 [project]
 name = "llms-txt-action"
-version = "0.1.1"
+version = "0.0.0"
 description = "GitHub Action to make documentation more accessible to LLMs."
 authors = [
     {name = "DemoDrive AI", email = "founders@demodrive.tech"}
@@ -47,8 +47,8 @@ dev = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 88
@@ -83,7 +83,6 @@ select = [
     "SLF", # self
     "SIM", # simplify
     "TID", # tidy-imports
-    "TCH", # type-checking
     "ARG", # unused-arguments
     "PTH", # use-pathlib
     "ERA", # eradicate

@@ -83,13 +83,13 @@ llms-txt --docs-dir site/
 
    ```bash
    # clone the repo
-   poetry install
+   uv sync
    ```
 
 1. Run the crawler:
 
    ```bash
-   poetry run python -m "llms_txt_action.entrypoint" --docs-dir site/
+   uv run python -m "llms_txt_action.entrypoint" --docs-dir site/
    ```
 
 ## Examples
