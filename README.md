@@ -11,7 +11,7 @@ This Github action/CLI tool can automatically generate markdown (.md) files for 
 
 ![File Structure](docs/file_structure.png)
 
-
+It completely runs locally be default, by passing MODEL_API_KEY one can choose to engage hosted cloud AI services to generate page summaries.
 
 ## Features
 
@@ -19,7 +19,7 @@ This Github action/CLI tool can automatically generate markdown (.md) files for 
 - 🌈 **All Formats** : Can process HTML, PDF, Images, DOCX, PPTX, XLSX (thanks to [docling](https://github.com/DS4SD/docling)) and convert them to Markdown. (coming soon)
 - 0️⃣ **Zero Config**: Works out of the box for most file based documentation framework.
 - 💾 **Generate Summaries**: Using LLMs, we generate concise summary of each page.
-- **BYO-Model**: Thanks to litellm, you can use upto 150 models.
+- 📕 **BYO-Model**: Thanks to [litellm](https://github.com/BerriAI/litellm), you can use upto 150 models like OpenAI, VertexAI, Cohere, Anthropic.
 
 
 ## Quick Start
@@ -33,9 +33,14 @@ There are two ways to access this library.
     steps:
       - name: Generate llms.txt
         uses: demodrive-ai/llms-txt-action@v0.1.0
-        with:
-          generate_md_files: true
-          # any other inputs you would like to set.
+
+  # OR You can choose to use an AI model to generate summaries, its completely optional.
+      steps:
+      - name: Generate llms.txt
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        uses: demodrive-ai/llms-txt-action@v0.1.0
+        # any other inputs you would like to set.
 ```
 OR
 
@@ -68,7 +73,7 @@ llms-txt --docs-dir site/
 ## Secret Parameters
 | Parameter           | Required | Default    | Description                                 |
 |---------------------|----------|------------|----------------------------------------------|
-| `MODEL_API_KEY`          | No       | None    | This key will be used to summarize pages for llms.txt               |
+| `MODEL_API_KEY`          | No       | None    | This key (eg. OPENAI_API_KEY) will be used to summarize pages to create llms.txt. Needs to match the `model_name` provider. If using the default model_name, pass OPENAI_API_KEY.                |
 
 
 
