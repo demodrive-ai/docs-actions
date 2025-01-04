@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llms-txt-action"
-version = "0.1.0-rc6"
+version = "0.1.1"
 description = "GitHub Action to make documentation more accessible to LLMs."
 authors = ["DemoDrive AI <founders@demodrive.tech>"]
 license = "MIT"

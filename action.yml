@@ -76,10 +76,10 @@ runs:
       shell: bash
       run: |
         cd ${{ github.action_path }}
-        poetry install --no-interaction --no-root
+        $HOME/.local/bin/poetry install --no-interaction --no-root
 
     - name: Run llms-txt-action
       shell: bash
       run: |
         cd ${{ github.action_path }}
-        poetry run python -m llms_txt_action.entrypoint
+        $HOME/.local/bin/poetry run python -m llms_txt_action.entrypoint

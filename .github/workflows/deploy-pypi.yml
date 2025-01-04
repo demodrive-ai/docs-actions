@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,6 +32,11 @@ jobs:
           version: 1.8.5
           virtualenvs-create: true
           virtualenvs-in-project: true
+
+      - name: Update version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          poetry version $VERSION
 
       - name: Build package
         run: poetry build
