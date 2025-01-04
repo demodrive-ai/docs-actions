@@ -31,6 +31,7 @@ firecrawl-py = "^1.6.8"
 rich = "^13.9.4"
 docling = "^2.14.0"
 defusedxml = "^0.7.1"
+litellm = "^1.56.8"
 
 
 [tool.poetry.group.dev.dependencies]

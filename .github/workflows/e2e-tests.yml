@@ -31,7 +31,7 @@ jobs:
           pip install mkdocs
           pip install sphinx sphinx-sitemap
 
-      - name: mkdocs - Build test docs
+      - name: mkdocs - Build docs
         run: |
           cd tests/test_mkdocs
           mkdocs build
@@ -56,6 +56,27 @@ jobs:
             echo "llms_full.txt not found"
             exit 1
           fi
+          rm "site/llms.txt"
+          rm "site/llms_full.txt"
+
+      - name: mkdocs - Run llms-txt (with LLM)
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: |
+          cd tests/test_mkdocs
+          poetry run llms-txt --docs-dir site/
+
+      - name: mkdocs - Check generated files
+        run: |
+          cd tests/test_mkdocs
+          if [! -f "site/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "site/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
 
       - name: sphinx - Build docs
         run: |
@@ -70,11 +91,11 @@ jobs:
       - name: sphinx - Check generated files
         run: |
           cd tests/test_sphinx
-          if [ ! -f "build/html/index.html" ]; then
-            echo "index.html not found"
+          if [ ! -f "build/html/index.md" ]; then
+            echo "index.md not found"
             exit 1
           fi
-          if [ ! -f "build/html/llms.txt" ]; then
+          if [! -f "build/html/llms.txt" ]; then
             echo "llms.txt not found"
             exit 1
           fi
@@ -82,9 +103,31 @@ jobs:
             echo "llms_full.txt not found"
             exit 1
           fi
+          rm "build/html/llms.txt"
+          rm "build/html/llms_full.txt"
+
+      - name: sphinx - Run llms-txt (with LLM)
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: |
+          cd tests/test_sphinx
+          poetry run llms-txt --docs-dir build/html/
+
+      - name: sphinx - Check generated files
+        run: |
+          cd tests/test_sphinx
+          if [! -f "build/html/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+
       - name: sphinx - Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sphinx-test-artifacts
-          path: tests/test_sphinx/build/html/llms.txt
-          retention-days: 1
+          name: sphinx-test-llms-txt
+          path: tests/test_sphinx/build/html/{llms.txt,llms_full.txt}
+          retention-days: 14

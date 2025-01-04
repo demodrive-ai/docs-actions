@@ -2,11 +2,15 @@
 
 # %%
 import logging
+import os
+import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 from defusedxml import ElementTree as ET  # noqa: N817
 from docling.datamodel.base_models import ConversionStatus
 from docling.document_converter import DocumentConverter
+from litellm import completion
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,9 +33,6 @@ def html_to_markdown(input_file: Path) -> str:
     """  # noqa: D401
     doc_converter = DocumentConverter()
     conversion_result = doc_converter.convert(input_file)
-    print(conversion_result)
-    print("selvam")
-    logger.info(conversion_result)
     if conversion_result.status == ConversionStatus.SUCCESS:
         markdown_content = conversion_result.document.export_to_markdown()
         # Fast string search for first heading using find()
@@ -108,58 +109,123 @@ def convert_html_to_markdown(input_path: str) -> list:
 # %%
 
 
-def summarize_page(url: str) -> str:  # noqa: ARG001
-    """Dummy function that returns a static summary for each page.
+def summarize_page(content: str, model_name: str, model_max_tokens: int) -> str:
+    """Summarize the page content using the model.
 
     This would analyze the page content and generate a summary.
 
     Args:
     ----
-        url (str): The URL of the page to summarize
+        content (str): The content of the page to summarize
+        model_name (str): Name of the model to use for summarization
+        model_max_tokens (int): Max tokens for the model
 
     Returns:
     -------
         str: A static summary of the page
 
-    """  # noqa: D401
-    return "This is a placeholder summary for the documentation page."
+    """
+    if os.getenv("MODEL_API_KEY"):
+        response = completion(
+            model=model_name,
+            api_key=os.getenv("MODEL_API_KEY"),
+            messages=[
+                {
+                    "content": "Summarize this into 1-line sentence packing information"
+                    "for technical audience. Content: " + content,
+                    "role": "user",
+                },
+            ],
+            max_tokens=model_max_tokens,
+        )
+        logger.info("Response: %s", response)
+        return response.choices[0].message.content
+    # Extract largest heading from markdown content if present
+    logger.info("No model API key found, using heading as summary")
+    return extract_heading(content)
 
 
-def generate_docs_structure(sitemap_path: str) -> str:
-    """Generates a documentation structure from a sitemap.xml file.
+def extract_heading(content: str) -> str:
+    """Extract the largest heading upto h3 from the given content."""
+    heading_match = re.search(r"^#{1,3}\s+(.+)$", content, re.MULTILINE)
+    logger.info("Heading match: %s", heading_match)
+    if heading_match:
+        return heading_match.group(1)
+    return ""
+
+
+def generate_docs_structure(
+    docs_dir: str,
+    sitemap_path: str,
+    model_name: str,
+    model_max_tokens: int,
+) -> str:
+    """Generate a documentation structure from a sitemap.xml file.
 
     Args:
     ----
         sitemap_path (str): Path to the sitemap.xml file
+        model_name (str): Name of the model to use for summarization
+        model_max_tokens (int): Max tokens for the model
 
     Returns:
     -------
         str: Markdown formatted documentation structure
 
-    """  # noqa: D401
+    """
     # Parse the sitemap XML
-    if not Path(sitemap_path).exists():
-        msg = f"The sitemap file {sitemap_path} does not exist."
+    if not Path(f"{docs_dir}/{sitemap_path}").exists():
+        msg = f"The sitemap file {docs_dir}/{sitemap_path} does not exist."
         raise FileNotFoundError(msg)
-    tree = ET.parse(sitemap_path)
+    tree = ET.parse(f"{docs_dir}/{sitemap_path}")
     root = tree.getroot()
 
     # Extract namespace
     ns = {"ns": root.tag.split("}")[0].strip("{")}
 
     # Start building the markdown content
-    content = ["# Docling Documentation\n\n## Docs\n"]
+    content = ["# Docs\n"]
 
     # Process each URL in the sitemap
     for url in root.findall(".//ns:url", ns):
         loc = url.find("ns:loc", ns).text
+        """
+        This doesnt call all cases. let me give more examples that needs to be handled.
 
-        # Skip the main page
-        if loc.endswith("/docling/"):
-            continue
+        https://test.com/ -> index.md
+        https://test.com/index.html -> index.md
+        https://test.com/configuration/ -> configuration/index.md
+        https://test.com/configuration/azure/ -> configuration/azure/index.md
+        https://test.comen/configuration/auzre.html -> configuration/azure.md
+        """
+        # Convert URL to file path
+        parsed_url = urlparse(loc)
+        path = parsed_url.path.strip("/")
 
+        # Handle different URL patterns
+        if path in {"", "index.html"}:
+            file_path = "index.md"
+        elif path.endswith(".html"):
+            # Remove .html and convert to .md
+            file_path = f"{path[:-5]}.md"
+        else:
+            # For paths ending in / or no extension, append index.md
+            file_path = f"{path}/index.md"
         # Generate a summary for the page
-        summary = summarize_page(loc)
+        try:
+            with Path(f"{docs_dir}/{file_path}").open() as f:
+                markdown_content = f.read()
+        except FileNotFoundError:
+            # Try without locale path by removing first directory if it's 2 characters
+            file_path_parts = file_path.split("/")
+            file_path_no_locale = (
+                "/".join(file_path_parts[1:])
+                if len(file_path_parts) > 1 and len(file_path_parts[0]) == 2
+                else file_path
+            )
+            with Path(f"{docs_dir}/{file_path_no_locale}").open() as f:
+                markdown_content = f.read()
+        summary = summarize_page(markdown_content, model_name, model_max_tokens)
 
         # Create the markdown link entry
         page_title = loc.rstrip("/").split("/")[-1].replace("-", " ").title()
@@ -172,7 +238,7 @@ def generate_docs_structure(sitemap_path: str) -> str:
 # %%
 
 
-def concatenate_markdown_files(markdown_files, output_file):
+def concatenate_markdown_files(markdown_files: list, output_file: str):
     """Concatenates multiple markdown files into a single file.
 
     Args:

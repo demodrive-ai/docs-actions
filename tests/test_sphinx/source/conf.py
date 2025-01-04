@@ -15,7 +15,7 @@ author = "demodrive"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = ["sphinx_sitemap"]
-html_baseurl = "https://docs.llms-txt.com"
+html_baseurl = "https://test.com/"
 templates_path = ["_templates"]
 exclude_patterns = []
 
@@ -25,3 +25,5 @@ exclude_patterns = []
 
 html_theme = "alabaster"
 html_static_path = ["_static"]
+
+sitemap_locales = [None]

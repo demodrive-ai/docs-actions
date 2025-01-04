@@ -50,23 +50,25 @@ llms-txt --docs-dir site/
 ```
 
 ## Input Parameters
-| Parameter           | Required | Default    | Description                                 |
+| Parameter           | Required | Default    | Description                                  |
 |---------------------|----------|------------|----------------------------------------------|
 | `docs_dir`          | No       | `site/`    | Documentation output directory               |
-| `generate_llms_txt` | No       | `true`     | Whether to generate LLMS.txt file. This requires MODEL_API_KEY.            |
-| `generate_llms_full_txt` | No  | `true`     | Whether to generate llms_full.txt file       |
-| `generate_md_files` | No       | `true`     | Generate md files for each html file         |
+| `skip_llms_txt`     | No       | `true`     | Skip llms.txt file generation.                   |
+| `skip_llms_full_txt` | No  | `true`     | skip llms_full.txt file generation.              |
+| `skip_md_files`     | No       | `true`     | Skip generation of markdown files                |
 | `llms_txt_name`     | No       | `llms.txt` | Name of the llms.txt output file             |
 | `llms_full_txt_name`| No       | `llms_full.txt` | Name of the llms_full.txt output file   |
-| `push_to_artifacts` | No       | `false`    | Whether to push generated files to github artifacts |
-| `model_name` | No       | `gpt-4o`    | Whether to push generated files to github artifacts |
+| `sitemap_path`      | No       | `sitemap.xml` | Path relative to docs_dir to the sitemap.xml file [default: sitemap.xml] |
+| `model_name`        | No       | `gpt-4o`    | Whether to push generated files to github artifacts |
+| `model_max_tokens`  | No       | `2000`      | Limit the number of tokens to send per summary request |
+
 
 
 
 ## Secret Parameters
 | Parameter           | Required | Default    | Description                                 |
 |---------------------|----------|------------|----------------------------------------------|
-| `MODEL_API_KEY`          | No       | `site/`    | Documentation output directory               |
+| `MODEL_API_KEY`          | No       | None    | This key will be used to summarize pages for llms.txt               |
 
 
 
