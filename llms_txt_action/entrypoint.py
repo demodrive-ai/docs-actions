@@ -15,6 +15,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def str2bool(v: str) -> bool:
+    """Convert a string to a boolean."""
+    return v.lower() in ("yes", "true", "t", "1")
+
+
 def generate_documentation(  # noqa: PLR0913
     docs_dir: str,
     sitemap_path: str,
@@ -24,7 +29,6 @@ def generate_documentation(  # noqa: PLR0913
     llms_txt_name: str,
     llms_full_txt_name: str,
     model_name: str,
-    model_max_tokens: int,
 ) -> list[str]:
     """Generate markdown and llms.txt files from HTML documentation.
 
@@ -38,7 +42,6 @@ def generate_documentation(  # noqa: PLR0913
         llms_txt_name: Name of the llms.txt file
         llms_full_txt_name: Name of the full llms.txt file
         model_name: Name of the model to use for summarization
-        model_max_tokens: Max tokens for the model
 
     Returns:
     -------
@@ -64,7 +67,6 @@ def generate_documentation(  # noqa: PLR0913
                         docs_dir,
                         sitemap_path,
                         model_name,
-                        model_max_tokens,
                     ),
                 )
                 logger.info(
@@ -79,7 +81,6 @@ def generate_documentation(  # noqa: PLR0913
                 raise
 
     if not skip_llms_full_txt:
-        logger.info("Generating llms.txt file")
         concatenate_markdown_files(
             markdown_files,
             f"{docs_dir}/{llms_full_txt_name}",
@@ -90,12 +91,12 @@ def generate_documentation(  # noqa: PLR0913
         )
 
     if skip_md_files:
-        logger.info("Deleting MD files as skip_md_files is set to False")
+        logger.info("Deleting generated .md files as skip_md_files is set to False")
         for file in markdown_files:
             Path(file).unlink()
-        logger.info("MD files deleted.")
+        logger.info(".md files deleted.")
 
-    logger.info("Generation completed.")
+    logger.info("Docs are LLM friendly now! 🎉")
     return markdown_files
 
 
@@ -112,16 +113,19 @@ def main():
     parser.add_argument(
         "--skip-md-files",
         action="store_true",
+        default=str2bool(os.environ.get("INPUT_SKIP_MD_FILES", "false")),
         help="Skip generation of markdown files",
     )
     parser.add_argument(
         "--skip-llms-txt",
         action="store_true",
+        default=str2bool(os.environ.get("INPUT_SKIP_LLMS_TXT", "false")),
         help="Skip llms.txt file generation",
     )
     parser.add_argument(
         "--skip-llms-full-txt",
         action="store_true",
+        default=str2bool(os.environ.get("INPUT_SKIP_LLMS_FULL_TXT", "false")),
         help="Skip full llms.txt file generation",
     )
     parser.add_argument(
@@ -144,11 +148,6 @@ def main():
         default=os.environ.get("INPUT_MODEL_NAME", "gpt-4o"),
         help="Name of the model to use for summarization [default: gpt-4o]",
     )
-    parser.add_argument(
-        "--model-max-tokens",
-        default=int(os.environ.get("INPUT_MODEL_MAX_TOKENS", "2000")),
-        help="Max tokens for the model [default: 2000]",
-    )
 
     args = parser.parse_args()
     logger.info("input args: %s", args)
@@ -162,7 +161,6 @@ def main():
         llms_txt_name=args.llms_txt_name,
         llms_full_txt_name=args.llms_full_txt_name,
         model_name=args.model_name,
-        model_max_tokens=args.model_max_tokens,
     )
 
 

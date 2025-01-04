@@ -9,16 +9,16 @@ inputs:
     description: "Documentation output directory"
     required: false
     default: "site/"
-  generate_llms_txt:
-    description: "Whether to generate LLMS.txt file"
+  skip_llms_txt:
+    description: "Skip llms.txt file generation"
     required: false
     default: "true"
-  generate_llms_full_txt:
-    description: "Whether to generate llms_full.txt file"
+  skip_llms_full_txt:
+    description: "Skip llms_full.txt file generation"
     required: false
     default: "true"
-  generate_md_files:
-    description: "Generate md files for each html file"
+  skip_md_files:
+    description: "Skip generation of markdown files"
     required: false
     default: "true"
   llms_txt_name:
@@ -29,10 +29,14 @@ inputs:
     description: "Name of the llms_full.txt output file"
     required: false
     default: "llms_full.txt"
-  push_to_artifacts:
-    description: "Whether to push generated files to artifacts"
+  sitemap_path:
+    description: "Path relative to docs_dir to the sitemap.xml file"
     required: false
-    default: "false"
+    default: "sitemap.xml"
+  model_name:
+    description: "Model to use for generating summaries"
+    required: false
+    default: "gpt-4"
 
 runs:
   using: "composite"
@@ -52,11 +56,7 @@ runs:
     - name: Install Poetry
       shell: bash
       run: |
-        if [[ "${{ inputs.poetry-version }}" == "latest" ]]; then
-          pipx install poetry
-        else
-          pipx install poetry==${{ inputs.poetry-version }}
-        fi
+        pipx install poetry
 
     - name: Get Poetry cache dir
       id: poetry-cache
@@ -83,14 +83,3 @@ runs:
       run: |
         cd ${{ github.action_path }}
         poetry run python -m llms_txt_action.entrypoint
-    # - name: Commit changes
-    #   shell: bash
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: |
-    #     cd ${{ inputs.docs_dir }}
-    #     git config --global user.email "action@github.com"
-    #     git config --global user.name "GitHub Action"
-    #     git add .
-    #     git commit -m "Generated LLMS.txt file"
-    #     git push

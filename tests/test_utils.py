@@ -132,7 +132,7 @@ def test_summarize_page_with_model():
         mock_response.choices = [Mock(message=Mock(content="Test summary"))]
         mock_completion.return_value = mock_response
 
-        result = summarize_page("Test content", "gpt-3.5-turbo", 100)
+        result = summarize_page("Test content", "gpt-3.5-turbo")
         assert result == "Test summary"
 
 
@@ -143,7 +143,7 @@ def test_summarize_page_without_model():
         patch("llms_txt_action.utils.extract_heading") as mock_extract,
     ):
         mock_extract.return_value = "Test Heading"
-        result = summarize_page("# Test Heading\nContent", "gpt-3.5-turbo", 100)
+        result = summarize_page("# Test Heading\nContent", "gpt-3.5-turbo")
         assert result == "Test Heading"
 
 
@@ -195,7 +195,6 @@ def test_generate_docs_structure(tmp_path, sample_sitemap_file):
         str(docs_dir),
         "sitemap.xml",
         "gpt-3.5-turbo",
-        100,
     )
 
     assert "# Docs" in result
@@ -207,7 +206,7 @@ def test_generate_docs_structure(tmp_path, sample_sitemap_file):
 def test_generate_docs_structure_missing_sitemap(tmp_path):
     """Test generate docs structure with missing sitemap."""
     with pytest.raises(FileNotFoundError):
-        generate_docs_structure(str(tmp_path), "nonexistent.xml", "gpt-3.5-turbo", 100)
+        generate_docs_structure(str(tmp_path), "nonexistent.xml", "gpt-3.5-turbo")
 
 
 # Tests for concatenate_markdown_files

@@ -109,7 +109,7 @@ def convert_html_to_markdown(input_path: str) -> list:
 # %%
 
 
-def summarize_page(content: str, model_name: str, model_max_tokens: int) -> str:
+def summarize_page(content: str, model_name: str) -> str:
     """Summarize the page content using the model.
 
     This would analyze the page content and generate a summary.
@@ -118,7 +118,6 @@ def summarize_page(content: str, model_name: str, model_max_tokens: int) -> str:
     ----
         content (str): The content of the page to summarize
         model_name (str): Name of the model to use for summarization
-        model_max_tokens (int): Max tokens for the model
 
     Returns:
     -------
@@ -136,7 +135,6 @@ def summarize_page(content: str, model_name: str, model_max_tokens: int) -> str:
                     "role": "user",
                 },
             ],
-            max_tokens=model_max_tokens,
         )
         logger.info("Response: %s", response)
         return response.choices[0].message.content
@@ -158,7 +156,6 @@ def generate_docs_structure(
     docs_dir: str,
     sitemap_path: str,
     model_name: str,
-    model_max_tokens: int,
 ) -> str:
     """Generate a documentation structure from a sitemap.xml file.
 
@@ -167,7 +164,6 @@ def generate_docs_structure(
         docs_dir (str): Path to the directory containing the documentation
         sitemap_path (str): Path to the sitemap.xml file
         model_name (str): Name of the model to use for summarization
-        model_max_tokens (int): Max tokens for the model
 
     Returns:
     -------
@@ -227,7 +223,7 @@ def generate_docs_structure(
             )
             with Path(f"{docs_dir}/{file_path_no_locale}").open() as f:
                 markdown_content = f.read()
-        summary = summarize_page(markdown_content, model_name, model_max_tokens)
+        summary = summarize_page(markdown_content, model_name)
 
         # Create the markdown link entry
         page_title = loc.rstrip("/").split("/")[-1].replace("-", " ").title()
