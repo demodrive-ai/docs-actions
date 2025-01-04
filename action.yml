@@ -39,47 +39,5 @@ inputs:
     default: "gpt-4"
 
 runs:
-  using: "composite"
-  steps:
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-        cache: "pip"
-
-    - name: Install pipx
-      shell: bash
-      run: |
-        python3 -m pip install --user pipx
-        python3 -m pipx ensurepath
-
-    - name: Install Poetry
-      shell: bash
-      run: |
-        pipx install poetry
-
-    - name: Get Poetry cache dir
-      id: poetry-cache
-      shell: bash
-      run: |
-        echo "dir=$(poetry config cache-dir)" >> $GITHUB_OUTPUT
-
-    - name: Setup Poetry cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.poetry-cache.outputs.dir }}
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
-
-    - name: Install dependencies
-      shell: bash
-      run: |
-        cd ${{ github.action_path }}
-        $HOME/.local/bin/poetry install --no-interaction --no-root
-
-    - name: Run llms-txt-action
-      shell: bash
-      run: |
-        cd ${{ github.action_path }}
-        $HOME/.local/bin/poetry run python -m llms_txt_action.entrypoint
+  using: 'docker'
+  image: 'Dockerfile'
