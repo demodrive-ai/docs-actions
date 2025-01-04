@@ -1,0 +1,96 @@
+name: "llms-txt-action"
+description: "Convert documentation websites into LLM-ready by adding /llms.txt. reference: https://llmstxt.org/."
+branding:
+  icon: "book"
+  color: "blue"
+
+inputs:
+  docs_dir:
+    description: "Documentation output directory"
+    required: false
+    default: "site/"
+  generate_llms_txt:
+    description: "Whether to generate LLMS.txt file"
+    required: false
+    default: "true"
+  generate_llms_full_txt:
+    description: "Whether to generate llms_full.txt file"
+    required: false
+    default: "true"
+  generate_md_files:
+    description: "Generate md files for each html file"
+    required: false
+    default: "true"
+  llms_txt_name:
+    description: "Name of the llms.txt output file"
+    required: false
+    default: "llms.txt"
+  llms_full_txt_name:
+    description: "Name of the llms_full.txt output file"
+    required: false
+    default: "llms_full.txt"
+  push_to_artifacts:
+    description: "Whether to push generated files to artifacts"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: "pip"
+
+    - name: Install pipx
+      shell: bash
+      run: |
+        python3 -m pip install --user pipx
+        python3 -m pipx ensurepath
+
+    - name: Install Poetry
+      shell: bash
+      run: |
+        if [[ "${{ inputs.poetry-version }}" == "latest" ]]; then
+          pipx install poetry
+        else
+          pipx install poetry==${{ inputs.poetry-version }}
+        fi
+
+    - name: Get Poetry cache dir
+      id: poetry-cache
+      shell: bash
+      run: |
+        echo "dir=$(poetry config cache-dir)" >> $GITHUB_OUTPUT
+
+    - name: Setup Poetry cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.poetry-cache.outputs.dir }}
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        poetry install --no-interaction --no-root
+
+    - name: Run llms-txt-action
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        poetry run python -m llms_txt_action.entrypoint
+    # - name: Commit changes
+    #   shell: bash
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     cd ${{ inputs.docs_dir }}
+    #     git config --global user.email "action@github.com"
+    #     git config --global user.name "GitHub Action"
+    #     git add .
+    #     git commit -m "Generated LLMS.txt file"
+    #     git push

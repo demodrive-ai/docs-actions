@@ -1,0 +1,133 @@
+name: E2E Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.8.5
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-interaction
+          pip install mkdocs
+          pip install sphinx sphinx-sitemap
+
+      - name: mkdocs - Build docs
+        run: |
+          cd tests/test_mkdocs
+          mkdocs build
+
+      - name: mkdocs - Run llms-txt
+        run: |
+          cd tests/test_mkdocs
+          poetry run llms-txt --docs-dir site/
+
+      - name: mkdocs - Check generated files
+        run: |
+          cd tests/test_mkdocs
+          if [ ! -f "site/index.md" ]; then
+            echo "index.md not found"
+            exit 1
+          fi
+          if [ ! -f "site/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "site/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+          rm "site/llms.txt"
+          rm "site/llms_full.txt"
+
+      - name: mkdocs - Run llms-txt (with LLM)
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: |
+          cd tests/test_mkdocs
+          poetry run llms-txt --docs-dir site/
+
+      - name: mkdocs - Check generated files
+        run: |
+          cd tests/test_mkdocs
+          if [ ! -f "site/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "site/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+
+      - name: sphinx - Build docs
+        run: |
+          cd tests/test_sphinx
+          make html
+
+      - name: sphinx - Run llms-txt
+        run: |
+          cd tests/test_sphinx
+          poetry run llms-txt --docs-dir build/html/
+
+      - name: sphinx - Check generated files
+        run: |
+          cd tests/test_sphinx
+          if [ ! -f "build/html/index.md"]; then
+            echo "index.md not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+          rm "build/html/llms.txt"
+          rm "build/html/llms_full.txt"
+
+      - name: sphinx - Run llms-txt (with LLM)
+        env:
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        run: |
+          cd tests/test_sphinx
+          poetry run llms-txt --docs-dir build/html/
+
+      - name: sphinx - Check generated files
+        run: |
+          cd tests/test_sphinx
+          if [ ! -f "build/html/llms.txt" ]; then
+            echo "llms.txt not found"
+            exit 1
+          fi
+          if [ ! -f "build/html/llms_full.txt" ]; then
+            echo "llms_full.txt not found"
+            exit 1
+          fi
+
+      - name: sphinx - Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sphinx-test-llms-txt
+          path: tests/test_sphinx/build/html/{llms.txt,llms_full.txt}
+          retention-days: 14
