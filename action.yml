@@ -1,8 +1,8 @@
 name: "llms-txt-action"
 description: "Convert documentation websites into LLM-ready by adding /llms.txt. reference: https://llmstxt.org/."
 branding:
-  icon: "book"
-  color: "blue"
+  icon: "align-center"
+  color: "green"
 
 inputs:
   docs_dir:
