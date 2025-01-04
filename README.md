@@ -142,8 +142,6 @@ MkDocs is a fast and simple static site generator that's geared towards building
 
       - name: Generate llms.txt, md files.
         uses: demodrive-ai/llms-txt-action@v0.1.0
-        with:
-          generate_md_files: true
 
       - name: Deploy to Github
         run : mkdocs gh-deploy --dirty
