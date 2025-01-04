@@ -164,6 +164,7 @@ def generate_docs_structure(
 
     Args:
     ----
+        docs_dir (str): Path to the directory containing the documentation
         sitemap_path (str): Path to the sitemap.xml file
         model_name (str): Name of the model to use for summarization
         model_max_tokens (int): Max tokens for the model
@@ -218,9 +219,10 @@ def generate_docs_structure(
         except FileNotFoundError:
             # Try without locale path by removing first directory if it's 2 characters
             file_path_parts = file_path.split("/")
+
             file_path_no_locale = (
                 "/".join(file_path_parts[1:])
-                if len(file_path_parts) > 1 and len(file_path_parts[0]) == 2
+                if len(file_path_parts) > 1 and len(file_path_parts[0]) == 2  # noqa: PLR2004
                 else file_path
             )
             with Path(f"{docs_dir}/{file_path_no_locale}").open() as f:
