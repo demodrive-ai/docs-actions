@@ -65,7 +65,6 @@ llms-txt --docs-dir site/
 | `llms_full_txt_name`| No       | `llms_full.txt` | Name of the llms_full.txt output file   |
 | `sitemap_path`      | No       | `sitemap.xml` | Path relative to docs_dir to the sitemap.xml file [default: sitemap.xml] |
 | `model_name`        | No       | `gpt-4o`    | Whether to push generated files to github artifacts |
-| `model_max_tokens`  | No       | `2000`      | Limit the number of tokens to send per summary request |
 
 
 

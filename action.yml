@@ -37,10 +37,6 @@ inputs:
     description: "Model to use for generating summaries"
     required: false
     default: "gpt-4"
-  model_max_tokens:
-    description: "Limit the number of tokens to send per summary request"
-    required: false
-    default: "2000"
 
 runs:
   using: "composite"

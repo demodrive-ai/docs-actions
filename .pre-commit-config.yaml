@@ -37,3 +37,12 @@ repos:
             .*\.(jpeg|jpg|png|gif|eot|woff|woff2|ttf|svg|ico)|
             \.gitignore|
           )$
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
