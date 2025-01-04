@@ -52,9 +52,9 @@ def generate_documentation(  # noqa: PLR0913
     markdown_files = convert_html_to_markdown(docs_dir)
 
     # Set defaults if None
-    skip_md_files = True if skip_md_files is None else skip_md_files
-    skip_llms_txt = True if skip_llms_txt is None else skip_llms_txt
-    skip_llms_full_txt = True if skip_llms_full_txt is None else skip_llms_full_txt
+    skip_md_files = False if skip_md_files is None else skip_md_files
+    skip_llms_txt = False if skip_llms_txt is None else skip_llms_txt
+    skip_llms_full_txt = False if skip_llms_full_txt is None else skip_llms_full_txt
 
     if not skip_llms_txt:
         with Path(f"{docs_dir}/{llms_txt_name}").open("w") as f:
@@ -89,7 +89,7 @@ def generate_documentation(  # noqa: PLR0913
             f"{docs_dir}/{llms_full_txt_name}",
         )
 
-    if not skip_md_files:
+    if skip_md_files:
         logger.info("Deleting MD files as skip_md_files is set to False")
         for file in markdown_files:
             Path(file).unlink()

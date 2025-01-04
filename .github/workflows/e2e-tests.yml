@@ -69,7 +69,7 @@ jobs:
       - name: mkdocs - Check generated files
         run: |
           cd tests/test_mkdocs
-          if [! -f "site/llms.txt" ]; then
+          if [ ! -f "site/llms.txt" ]; then
             echo "llms.txt not found"
             exit 1
           fi
@@ -91,11 +91,11 @@ jobs:
       - name: sphinx - Check generated files
         run: |
           cd tests/test_sphinx
-          if [ ! -f "build/html/index.md" ]; then
+          if [ ! -f "build/html/index.md"]; then
             echo "index.md not found"
             exit 1
           fi
-          if [! -f "build/html/llms.txt" ]; then
+          if [ ! -f "build/html/llms.txt" ]; then
             echo "llms.txt not found"
             exit 1
           fi
@@ -116,7 +116,7 @@ jobs:
       - name: sphinx - Check generated files
         run: |
           cd tests/test_sphinx
-          if [! -f "build/html/llms.txt" ]; then
+          if [ ! -f "build/html/llms.txt" ]; then
             echo "llms.txt not found"
             exit 1
           fi
