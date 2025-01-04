@@ -87,4 +87,3 @@ runs:
       run: |
         cd ${{ github.action_path }}
         poetry run python -m llms_txt_action.entrypoint
-

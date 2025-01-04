@@ -14,8 +14,11 @@ from .utils import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def str2bool(v: str) -> bool:
+    """Convert a string to a boolean."""
     return v.lower() in ("yes", "true", "t", "1")
+
 
 def generate_documentation(  # noqa: PLR0913
     docs_dir: str,
