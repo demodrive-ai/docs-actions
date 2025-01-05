@@ -56,14 +56,13 @@ jobs:
           cache: "pip"
 
       - name: Install uv
-        run: |
-          pip install uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Load cached dependencies
         uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-${{ runner.os }}-lint-${{ hashFiles('**/requirements.txt') }}
+          key: venv-${{ runner.os }}-lint-${{ hashFiles('**/uv.lock') }}
 
       - name: Install dependencies
         run: |
