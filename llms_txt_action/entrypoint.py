@@ -1,9 +1,11 @@
 """Script to generate markdown files and llms.txt from HTML documentation."""
+# ruff: noqa: UP007
 
 import argparse
 import logging
 import os
 from pathlib import Path
+from typing import Optional
 
 from .utils import (
     concatenate_markdown_files,
@@ -23,9 +25,9 @@ def str2bool(v: str) -> bool:
 def generate_documentation(  # noqa: PLR0913
     docs_dir: str,
     sitemap_path: str,
-    skip_md_files: bool | None,
-    skip_llms_txt: bool | None,
-    skip_llms_full_txt: bool | None,
+    skip_md_files: Optional[bool],
+    skip_llms_txt: Optional[bool],
+    skip_llms_full_txt: Optional[bool],
     llms_txt_name: str,
     llms_full_txt_name: str,
     model_name: str,
