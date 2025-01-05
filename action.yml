@@ -12,15 +12,15 @@ inputs:
   skip_llms_txt:
     description: "Skip llms.txt file generation"
     required: false
-    default: "true"
+    default: "false"
   skip_llms_full_txt:
     description: "Skip llms_full.txt file generation"
     required: false
-    default: "true"
+    default: "false"
   skip_md_files:
     description: "Skip generation of markdown files"
     required: false
-    default: "true"
+    default: "false"
   llms_txt_name:
     description: "Name of the llms.txt output file"
     required: false
@@ -36,7 +36,7 @@ inputs:
   model_name:
     description: "Model to use for generating summaries"
     required: false
-    default: "gpt-4"
+    default: "gpt-4o-mini"
 
 runs:
   using: 'docker'
