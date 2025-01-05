@@ -88,7 +88,7 @@ def generate_documentation(  # noqa: PLR0913
             f"{docs_dir}/{llms_full_txt_name}",
         )
         logger.info(
-            "llms_full.txt file generated at %s",
+            "llms-full.txt file generated at %s",
             f"{docs_dir}/{llms_full_txt_name}",
         )
 
@@ -137,8 +137,8 @@ def main():
     )
     parser.add_argument(
         "--llms-full-txt-name",
-        default=os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms_full.txt"),
-        help="Name of the full llms.txt file [default: llms_full.txt]",
+        default=os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms-full.txt"),
+        help="Name of the full llms.txt file [default: llms-full.txt]",
     )
     parser.add_argument(
         "--sitemap-path",

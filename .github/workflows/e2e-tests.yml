@@ -49,12 +49,12 @@ jobs:
             echo "llms.txt not found"
             exit 1
           fi
-          if [ ! -f "site/llms_full.txt" ]; then
-            echo "llms_full.txt not found"
+          if [ ! -f "site/llms-full.txt" ]; then
+            echo "llms-full.txt not found"
             exit 1
           fi
           rm "site/llms.txt"
-          rm "site/llms_full.txt"
+          rm "site/llms-full.txt"
 
       - name: mkdocs - Run llms-txt (with LLM)
         env:
@@ -70,8 +70,8 @@ jobs:
             echo "llms.txt not found"
             exit 1
           fi
-          if [ ! -f "site/llms_full.txt" ]; then
-            echo "llms_full.txt not found"
+          if [ ! -f "site/llms-full.txt" ]; then
+            echo "llms-full.txt not found"
             exit 1
           fi
 
@@ -96,12 +96,12 @@ jobs:
             echo "llms.txt not found"
             exit 1
           fi
-          if [ ! -f "build/html/llms_full.txt" ]; then
-            echo "llms_full.txt not found"
+          if [ ! -f "build/html/llms-full.txt" ]; then
+            echo "llms-full.txt not found"
             exit 1
           fi
           rm "build/html/llms.txt"
-          rm "build/html/llms_full.txt"
+          rm "build/html/llms-full.txt"
 
       - name: sphinx - Run llms-txt (with LLM)
         env:
@@ -117,8 +117,8 @@ jobs:
             echo "llms.txt not found"
             exit 1
           fi
-          if [ ! -f "build/html/llms_full.txt" ]; then
-            echo "llms_full.txt not found"
+          if [ ! -f "build/html/llms-full.txt" ]; then
+            echo "llms-full.txt not found"
             exit 1
           fi
 
@@ -126,5 +126,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sphinx-test-llms-txt
-          path: tests/test_sphinx/build/html/{llms.txt,llms_full.txt}
+          path: tests/test_sphinx/build/html/{llms.txt,llms-full.txt}
           retention-days: 14

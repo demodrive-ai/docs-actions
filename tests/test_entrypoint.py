@@ -50,7 +50,7 @@ def test_default_arguments(mock_generate_documentation):
         skip_llms_txt=False,
         skip_llms_full_txt=False,
         llms_txt_name="llms.txt",
-        llms_full_txt_name="llms_full.txt",
+        llms_full_txt_name="llms-full.txt",
         model_name="gpt-4o",
     )
 
@@ -78,7 +78,7 @@ def test_cli_arguments(mock_generate_documentation):
         skip_llms_txt=False,  # default unchanged
         skip_llms_full_txt=False,  # default unchanged
         llms_txt_name="custom.txt",
-        llms_full_txt_name="llms_full.txt",  # default unchanged
+        llms_full_txt_name="llms-full.txt",  # default unchanged
         model_name="gpt-3.5",
     )
 
@@ -103,7 +103,7 @@ def test_environment_variables(mock_generate_documentation):
         skip_llms_txt=True,
         skip_llms_full_txt=False,  # default unchanged
         llms_txt_name="env.txt",
-        llms_full_txt_name="llms_full.txt",  # default unchanged
+        llms_full_txt_name="llms-full.txt",  # default unchanged
         model_name="gpt-4",
     )
 
@@ -133,6 +133,6 @@ def test_cli_overrides_environment(mock_generate_documentation):
         skip_llms_txt=False,
         skip_llms_full_txt=False,
         llms_txt_name="llms.txt",
-        llms_full_txt_name="llms_full.txt",
+        llms_full_txt_name="llms-full.txt",
         model_name="cli-model",  # CLI takes precedence
     )

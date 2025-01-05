@@ -14,7 +14,7 @@ inputs:
     required: false
     default: "false"
   skip_llms_full_txt:
-    description: "Skip llms_full.txt file generation"
+    description: "Skip llms-full.txt file generation"
     required: false
     default: "false"
   skip_md_files:
@@ -26,9 +26,9 @@ inputs:
     required: false
     default: "llms.txt"
   llms_full_txt_name:
-    description: "Name of the llms_full.txt output file"
+    description: "Name of the llms-full.txt output file"
     required: false
-    default: "llms_full.txt"
+    default: "llms-full.txt"
   sitemap_path:
     description: "Path relative to docs_dir to the sitemap.xml file"
     required: false
