@@ -12,23 +12,23 @@ inputs:
   skip_llms_txt:
     description: "Skip llms.txt file generation"
     required: false
-    default: "true"
+    default: "false"
   skip_llms_full_txt:
-    description: "Skip llms_full.txt file generation"
+    description: "Skip llms-full.txt file generation"
     required: false
-    default: "true"
+    default: "false"
   skip_md_files:
     description: "Skip generation of markdown files"
     required: false
-    default: "true"
+    default: "false"
   llms_txt_name:
     description: "Name of the llms.txt output file"
     required: false
     default: "llms.txt"
   llms_full_txt_name:
-    description: "Name of the llms_full.txt output file"
+    description: "Name of the llms-full.txt output file"
     required: false
-    default: "llms_full.txt"
+    default: "llms-full.txt"
   sitemap_path:
     description: "Path relative to docs_dir to the sitemap.xml file"
     required: false
@@ -36,50 +36,8 @@ inputs:
   model_name:
     description: "Model to use for generating summaries"
     required: false
-    default: "gpt-4"
+    default: "gpt-4o-mini"
 
 runs:
-  using: "composite"
-  steps:
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-        cache: "pip"
-
-    - name: Install pipx
-      shell: bash
-      run: |
-        python3 -m pip install --user pipx
-        python3 -m pipx ensurepath
-
-    - name: Install Poetry
-      shell: bash
-      run: |
-        pipx install poetry
-
-    - name: Get Poetry cache dir
-      id: poetry-cache
-      shell: bash
-      run: |
-        echo "dir=$(poetry config cache-dir)" >> $GITHUB_OUTPUT
-
-    - name: Setup Poetry cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.poetry-cache.outputs.dir }}
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-poetry-
-
-    - name: Install dependencies
-      shell: bash
-      run: |
-        cd ${{ github.action_path }}
-        $HOME/.local/bin/poetry install --no-interaction --no-root
-
-    - name: Run llms-txt-action
-      shell: bash
-      run: |
-        cd ${{ github.action_path }}
-        $HOME/.local/bin/poetry run python -m llms_txt_action.entrypoint
+  using: 'docker'
+  image: 'Dockerfile'

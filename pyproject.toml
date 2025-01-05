@@ -1,11 +1,12 @@
-[tool.poetry]
+[project]
 name = "llms-txt-action"
-version = "0.1.1"
+version = "0.0.0"
 description = "GitHub Action to make documentation more accessible to LLMs."
-authors = ["DemoDrive AI <founders@demodrive.tech>"]
-license = "MIT"
+authors = [
+    {name = "DemoDrive AI", email = "founders@demodrive.tech"}
+]
+license = {text = "MIT"}
 readme = "README.md"
-packages = [{include = "llms_txt_action"}]
 keywords = ["llm", "documentation", "github-action"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -18,33 +19,36 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Documentation"
 ]
-homepage = "https://github.com/demodrive-ai/llms-txt-action"
-repository = "https://github.com/demodrive-ai/llms-txt-action"
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.31.0",
+    "firecrawl-py>=1.6.8",
+    "rich>=13.9.4",
+    "docling>=2.14.0",
+    "defusedxml>=0.7.1",
+    "litellm>=1.56.8"
+]
 
-[tool.poetry.scripts]
+[project.urls]
+Homepage = "https://github.com/demodrive-ai/llms-txt-action"
+Repository = "https://github.com/demodrive-ai/llms-txt-action"
+
+[project.scripts]
 llms-txt = "llms_txt_action.entrypoint:main"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-requests = "^2.31.0"
-firecrawl-py = "^1.6.8"
-rich = "^13.9.4"
-docling = "^2.14.0"
-defusedxml = "^0.7.1"
-litellm = "^1.56.8"
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4"
-ruff = "^0.8.4"
-pre-commit = "^3.6.0"
-pytest-cov = "^4.1.0"
-bandit = "^1.7.8"
-safety = "^3.0.1"
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "ruff>=0.8.4",
+    "pre-commit>=3.6.0",
+    "pytest-cov>=4.1.0",
+    "bandit>=1.7.8",
+    "safety>=3.0.1"
+]
 
 [build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 88
@@ -79,7 +83,6 @@ select = [
     "SLF", # self
     "SIM", # simplify
     "TID", # tidy-imports
-    "TCH", # type-checking
     "ARG", # unused-arguments
     "PTH", # use-pathlib
     "ERA", # eradicate

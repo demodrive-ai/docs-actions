@@ -17,17 +17,13 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.7.1
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Check for updates
-        run: poetry show --outdated
+        run: uv pip list --outdated
 
       - name: Run safety check
         run: |
-          pip install safety
+          uv pip install safety
           safety check

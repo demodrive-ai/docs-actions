@@ -59,10 +59,10 @@ llms-txt --docs-dir site/
 |---------------------|----------|------------|----------------------------------------------|
 | `docs_dir`          | No       | `site/`    | Documentation output directory               |
 | `skip_llms_txt`     | No       | `true`     | Skip llms.txt file generation.                   |
-| `skip_llms_full_txt` | No  | `true`     | skip llms_full.txt file generation.              |
+| `skip_llms_full_txt` | No  | `true`     | skip llms-full.txt file generation.              |
 | `skip_md_files`     | No       | `true`     | Skip generation of markdown files                |
 | `llms_txt_name`     | No       | `llms.txt` | Name of the llms.txt output file             |
-| `llms_full_txt_name`| No       | `llms_full.txt` | Name of the llms_full.txt output file   |
+| `llms_full_txt_name`| No       | `llms-full.txt` | Name of the llms-full.txt output file   |
 | `sitemap_path`      | No       | `sitemap.xml` | Path relative to docs_dir to the sitemap.xml file [default: sitemap.xml] |
 | `model_name`        | No       | `gpt-4o`    | Whether to push generated files to github artifacts |
 
@@ -83,13 +83,13 @@ llms-txt --docs-dir site/
 
    ```bash
    # clone the repo
-   poetry install
+   uv sync
    ```
 
 1. Run the crawler:
 
    ```bash
-   poetry run python -m "llms_txt_action.entrypoint" --docs-dir site/
+   uv run python -m "llms_txt_action.entrypoint" --docs-dir site/
    ```
 
 ## Examples

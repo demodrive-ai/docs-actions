@@ -1,9 +1,11 @@
 """Script to generate markdown files and llms.txt from HTML documentation."""
+# ruff: noqa: UP007
 
 import argparse
 import logging
 import os
 from pathlib import Path
+from typing import Optional
 
 from .utils import (
     concatenate_markdown_files,
@@ -23,9 +25,9 @@ def str2bool(v: str) -> bool:
 def generate_documentation(  # noqa: PLR0913
     docs_dir: str,
     sitemap_path: str,
-    skip_md_files: bool | None,
-    skip_llms_txt: bool | None,
-    skip_llms_full_txt: bool | None,
+    skip_md_files: Optional[bool],
+    skip_llms_txt: Optional[bool],
+    skip_llms_full_txt: Optional[bool],
     llms_txt_name: str,
     llms_full_txt_name: str,
     model_name: str,
@@ -86,7 +88,7 @@ def generate_documentation(  # noqa: PLR0913
             f"{docs_dir}/{llms_full_txt_name}",
         )
         logger.info(
-            "llms_full.txt file generated at %s",
+            "llms-full.txt file generated at %s",
             f"{docs_dir}/{llms_full_txt_name}",
         )
 
@@ -135,8 +137,8 @@ def main():
     )
     parser.add_argument(
         "--llms-full-txt-name",
-        default=os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms_full.txt"),
-        help="Name of the full llms.txt file [default: llms_full.txt]",
+        default=os.environ.get("INPUT_LLMS_FULL_TXT_NAME", "llms-full.txt"),
+        help="Name of the full llms.txt file [default: llms-full.txt]",
     )
     parser.add_argument(
         "--sitemap-path",
