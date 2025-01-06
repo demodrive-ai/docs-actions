@@ -9,8 +9,8 @@ from typing import Optional
 
 from .utils import (
     concatenate_markdown_files,
-    convert_html_to_markdown,
     generate_docs_structure,
+    html_folder_to_markdown,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -54,7 +54,7 @@ def generate_documentation(  # noqa: PLR0913
     logger.info("Starting Generation at folder - %s", docs_dir)
 
     logger.info("Generating MD files for all HTML files at folder - %s", docs_dir)
-    markdown_files = convert_html_to_markdown(docs_dir)
+    markdown_files = html_folder_to_markdown(docs_dir)
 
     # Set defaults if None
     skip_md_files = False if skip_md_files is None else skip_md_files
@@ -77,10 +77,8 @@ def generate_documentation(  # noqa: PLR0913
                 )
             except FileNotFoundError:
                 logger.exception(
-                    "Could not find sitemap file at %s",
-                    f"{docs_dir}/{sitemap_path}",
+                    "Failed to generate llms.txt file",
                 )
-                raise
 
     if not skip_llms_full_txt:
         concatenate_markdown_files(
