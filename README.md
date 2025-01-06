@@ -31,15 +31,15 @@ There are two ways to access this library.
 ```yaml
 
     steps:
-      - name: Generate llms.txt
-        uses: demodrive-ai/llms-txt-action@v0.1.0
+      - name: Make docs LLM ready
+        uses: demodrive-ai/llms-txt-action@v1
 
   # OR You can choose to use an AI model to generate summaries, its completely optional.
       steps:
-      - name: Generate llms.txt
+      - name: Make docs LLM ready
         env:
           MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
-        uses: demodrive-ai/llms-txt-action@v0.1.0
+        uses: demodrive-ai/llms-txt-action@v1
         # any other inputs you would like to set.
 ```
 OR
@@ -126,7 +126,7 @@ python:
 
 ```txt
 # docs/requirements.txt
-llms-txt-action==0.1.0
+llms-txt-action
 ```
 
 ### MkDocs + Github Pages
@@ -144,8 +144,8 @@ MkDocs is a fast and simple static site generator that's geared towards building
       - name: Generate static files
         run : mkdocs build
 
-      - name: Generate llms.txt, md files.
-        uses: demodrive-ai/llms-txt-action@v0.1.0
+      - name: Make docs LLM ready
+        uses: demodrive-ai/llms-txt-action@v1
 
       - name: Deploy to Github
         run : mkdocs gh-deploy --dirty
@@ -164,8 +164,8 @@ Sphinx is a popular documentation generator for Python projects. Here's how to i
 #...
       - name: Build HTML
         uses: ammaraskar/sphinx-action@master
-      - name: Generate llms.txt, md files.
-        uses: demodrive-ai/llms-txt-action@v0.1.0
+      - name: Make docs LLM Ready
+        uses: demodrive-ai/llms-txt-action@v1
         with:
           name: docs-dir
           path: docs/build/html/
