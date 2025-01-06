@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv venv
-          uv pip install -e .
+          uv sync --all-extras --dev
           uv pip install mkdocs sphinx sphinx-sitemap
 
       - name: mkdocs - Build docs

@@ -1,8 +1,8 @@
 # llms-txt-actions
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/your-org/docs-actions)](https://github.com/your-org/docs-actions/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/demodrive-ai/llms-txt-action/ci.yml?branch=main)](https://github.com/demodrive-ai/llms-txt-actions/actions)
-[![License](https://img.shields.io/github/license/demodrive-ai/llms-txt-actions)](LICENSE)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/demodrive-ai/llms-txt-action)](https://github.com/demodrive-ai/llms-txt-action/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/demodrive-ai/llms-txt-action/ci.yml?branch=main)](https://github.com/demodrive-ai/llms-txt-action/actions)
+[![License](https://img.shields.io/github/license/demodrive-ai/llms-txt-action)](LICENSE)
 
 
 ### Make your documentation LLM friendly.
