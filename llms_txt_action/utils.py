@@ -5,7 +5,6 @@ import logging
 import os
 import re
 from pathlib import Path
-from urllib.parse import urlparse
 
 from defusedxml import ElementTree as ET  # noqa: N817
 from docling.datamodel.base_models import ConversionStatus
@@ -16,7 +15,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-# %%
 def html_to_markdown(input_file: Path) -> str:
     """Converts HTML content to Markdown.
 
@@ -42,7 +40,7 @@ def html_to_markdown(input_file: Path) -> str:
     raise RuntimeError(msg)
 
 
-def convert_html_to_markdown(input_path: str) -> list:
+def html_folder_to_markdown(input_path: str) -> list:
     """Recursively converts all HTML files in the given directory.
 
     to Markdown files and collects the paths of the generated Markdown files.
@@ -106,10 +104,7 @@ def convert_html_to_markdown(input_path: str) -> list:
     return markdown_files
 
 
-# %%
-
-
-def summarize_page(content: str, model_name: str) -> str:
+def generate_summary(content: str, model_name: str) -> str:
     """Summarize the page content using the model.
 
     This would analyze the page content and generate a summary.
@@ -140,15 +135,88 @@ def summarize_page(content: str, model_name: str) -> str:
         return response.choices[0].message.content
     # Extract largest heading from markdown content if present
     logger.info("No model API key found, using heading as summary")
-    return extract_heading(content)
+    return _extract_heading(content)
 
 
-def extract_heading(content: str) -> str:
+def _extract_heading(content: str) -> str:
     """Extract the largest heading upto h3 from the given content."""
     heading_match = re.search(r"^#{1,3}\s+(.+)$", content, re.MULTILINE)
     logger.info("Heading match: %s", heading_match)
     if heading_match:
         return heading_match.group(1)
+    return ""
+
+
+def _extract_site_url(root: ET) -> str:
+    """Extract the site URL from the sitemap.xml file by finding common prefix."""
+    ns = {"ns": root.tag.split("}")[0].strip("{")}
+    urls = [url.find("ns:loc", ns).text for url in root.findall(".//ns:url", ns)]
+    if not urls:
+        msg = "No URLs found in sitemap"
+        raise ValueError(msg)
+
+    # Find common prefix among all URLs
+    shortest = min(urls, key=len)
+    for i, char in enumerate(shortest):
+        if any(url[i] != char for url in urls):
+            return shortest[:i]
+
+    return shortest
+
+
+def _convert_url_to_file_path(
+    url: str,
+    site_url: str,
+    docs_dir: str,
+    locale_length: int = 2,
+) -> str:
+    """Convert the URL to a file path.
+
+    Strips site_url prefix and checks various path patterns to find existing file.
+    Returns empty string if no file exists.
+
+    Args:
+    ----
+        url (str): Full URL to convert
+        site_url (str): Base site URL to strip
+        docs_dir (str): Path to the directory containing the documentation
+        locale_length (int): Length of the locale directory
+
+    Returns:
+    -------
+        Relative file path if found, empty string otherwise
+
+    """
+    # Strip site URL prefix
+    if not url.startswith(site_url):
+        return ""
+    if url.endswith("/"):
+        url = url + "index.html"
+    path = url[len(site_url.rstrip("/")) :].strip("/")
+    # Handle different URL patterns
+    if path in {"", "index.html"}:
+        file_path = "index.md"
+    elif path.endswith(".html"):
+        file_path = f"{path[:-5]}.md"
+    else:
+        file_path = f"{path}/index.md"
+    # Try original path
+    if Path(f"{docs_dir}/{file_path}").exists():
+        return file_path
+
+    # Try without "latest/" suffix
+    if "latest/" in file_path:
+        no_latest = file_path.replace("latest/", "")
+        if Path(f"{docs_dir}/{no_latest}").exists():
+            return no_latest
+
+    # Try without 2-letter locale directory
+    parts = file_path.split("/")
+    if len(parts) > 1 and len(parts[0]) == locale_length:
+        no_locale = "/".join(parts[1:])
+        if Path(f"{docs_dir}/{no_locale}").exists():
+            return no_locale
+
     return ""
 
 
@@ -158,6 +226,11 @@ def generate_docs_structure(
     model_name: str,
 ) -> str:
     """Generate a documentation structure from a sitemap.xml file.
+
+    first, extract site url.
+    then for each url, convert to file path.
+    then for each file path, read the file and summarize it.
+    then create a markdown link entry.
 
     Args:
     ----
@@ -174,6 +247,7 @@ def generate_docs_structure(
     if not Path(f"{docs_dir}/{sitemap_path}").exists():
         msg = f"The sitemap file {docs_dir}/{sitemap_path} does not exist."
         raise FileNotFoundError(msg)
+
     tree = ET.parse(f"{docs_dir}/{sitemap_path}")
     root = tree.getroot()
 
@@ -183,57 +257,26 @@ def generate_docs_structure(
     # Start building the markdown content
     content = ["# Docs\n"]
 
+    site_url = _extract_site_url(root)
     # Process each URL in the sitemap
     for url in root.findall(".//ns:url", ns):
         loc = url.find("ns:loc", ns).text
-        """
-        This doesnt call all cases. let me give more examples that needs to be handled.
-
-        https://test.com/ -> index.md
-        https://test.com/index.html -> index.md
-        https://test.com/configuration/ -> configuration/index.md
-        https://test.com/configuration/azure/ -> configuration/azure/index.md
-        https://test.comen/configuration/auzre.html -> configuration/azure.md
-        """
-        # Convert URL to file path
-        parsed_url = urlparse(loc)
-        path = parsed_url.path.strip("/")
-
-        # Handle different URL patterns
-        if path in {"", "index.html"}:
-            file_path = "index.md"
-        elif path.endswith(".html"):
-            # Remove .html and convert to .md
-            file_path = f"{path[:-5]}.md"
-        else:
-            # For paths ending in / or no extension, append index.md
-            file_path = f"{path}/index.md"
-        # Generate a summary for the page
         try:
+            logger.info("Processing %s", loc)
+            file_path = _convert_url_to_file_path(loc, site_url, docs_dir)
+            logger.info("found file path: %s for %s", file_path, loc)
             with Path(f"{docs_dir}/{file_path}").open() as f:
                 markdown_content = f.read()
+
+            summary = generate_summary(markdown_content, model_name)
+            page_title = loc.rstrip("/").split("/")[-1].replace("-", " ").title()
+            content.append(f"- [{page_title}]({loc}): {summary}")
         except FileNotFoundError:
             # Try without locale path by removing first directory if it's 2 characters
-            file_path_parts = file_path.split("/")
-
-            file_path_no_locale = (
-                "/".join(file_path_parts[1:])
-                if len(file_path_parts) > 1 and len(file_path_parts[0]) == 2  # noqa: PLR2004
-                else file_path
-            )
-            with Path(f"{docs_dir}/{file_path_no_locale}").open() as f:
-                markdown_content = f.read()
-        summary = summarize_page(markdown_content, model_name)
-
-        # Create the markdown link entry
-        page_title = loc.rstrip("/").split("/")[-1].replace("-", " ").title()
-        content.append(f"- [{page_title}]({loc}): {summary}")
-
+            logger.info("File not found: %s", file_path)
+            continue
     # Join all lines with newlines
     return "\n".join(content)
-
-
-# %%
 
 
 def concatenate_markdown_files(markdown_files: list, output_file: str):
