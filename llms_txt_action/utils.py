@@ -143,7 +143,8 @@ def _extract_heading(content: str) -> str:
     heading_match = re.search(r"^#{1,3}\s+(.+)$", content, re.MULTILINE)
     logger.info("Heading match: %s", heading_match)
     if heading_match:
-        return heading_match.group(1)
+        heading_match = heading_match.group(1)
+        return heading_match.replace("¶", "")
     return ""
 
 

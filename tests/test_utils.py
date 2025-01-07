@@ -447,3 +447,63 @@ def test_invalid_urls(setup_mock_files, monkeypatch):
         )
         == ""
     )
+
+
+def test_extract_h1_heading():
+    """Test extract h1 heading."""
+    content = """# Main Heading
+Some content here
+## Subheading"""
+    assert _extract_heading(content) == "Main Heading"
+
+
+def test_extract_h2_heading():
+    """Test extract h2 heading."""
+    content = """## Second Level Heading
+Some content here"""
+    assert _extract_heading(content) == "Second Level Heading"
+
+
+def test_extract_h3_heading():
+    """Test extract h3 heading."""
+    content = """### Third Level Heading
+Some content here"""
+    assert _extract_heading(content) == "Third Level Heading"
+
+
+def test_extract_heading_with_paragraph():
+    """Test extract heading with paragraph."""
+    content = """Some initial text
+# Main Heading
+More content"""
+    assert _extract_heading(content) == "Main Heading"
+
+
+def test_extract_heading_with_special_chars():
+    """Test extract heading with special chars."""
+    content = "# Heading with symbol ¶"
+    assert _extract_heading(content) == "Heading with symbol "
+
+
+def test_no_heading():
+    """Test extract heading with no heading."""
+    content = "Just some text without any heading"
+    assert _extract_heading(content) == ""
+
+
+def test_heading_larger_than_h3():
+    """Test extract heading larger than h3."""
+    content = """#### H4 Heading
+Some content"""
+    assert _extract_heading(content) == ""
+
+
+def test_empty_content():
+    """Test extract heading with empty content."""
+    assert _extract_heading("") == ""
+
+
+def test_extract_heading_with_multiple_special_chars():
+    """Test extract heading with multiple special chars."""
+    content = "# Heading ¶ with ¶ multiple symbols ¶"
+    assert _extract_heading(content) == "Heading  with  multiple symbols "
