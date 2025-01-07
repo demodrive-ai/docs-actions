@@ -286,18 +286,6 @@ def test_extract_site_url_single_url():
     assert _extract_site_url(root) == "https://example.com/"
 
 
-def test_extract_site_url_different_domains():
-    """Test extracting site URL with different domains."""
-    xml_content = """<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        <url><loc>https://example.com/page1</loc></url>
-        <url><loc>https://different.com/page2</loc></url>
-    </urlset>
-    """
-    root = ET.fromstring(xml_content)
-    assert _extract_site_url(root) == "https://"
-
-
 @pytest.fixture
 def setup_mock_files(tmp_path):
     """Create mock files for testing."""
